@@ -8,6 +8,7 @@ import { WritableStream } from "node:stream/web";
 import express from "express";
 import { URL } from "node:url";
 import path from "node:path";
+
 import { mimeTypesJson } from "./mime.js";
 
 const DOWNLOAD_MODE = !!process.env.DOWNLOAD_MODE || false;
@@ -15,7 +16,7 @@ console.log("DOWNLOAD MODE:", DOWNLOAD_MODE);
 const fileDownLoad = async (url) => {
   url = `${process.env.BASE_URL}${url}`;
   return new Promise(async (accept) => {
-    const stntUrl = new URL(`${process.env.BASE_URL}${url}`);
+    const stntUrl = new URL(url);
     const filePath = stntUrl.pathname;
     const pathFolder = filePath.replace(/\/[A-Za-z0-9-]+\..*/g, "");
 
@@ -59,7 +60,7 @@ app.use(express.json());
 //app.use(express.urlencoded({ urlencoded: true }));
 app.use(express.static(path.join(__dirname, "public")));
 
-app.get(`${process.env.INDEX_PATH || ""}`, (_, res) => {
+app.get(`${process.env.INDEX_PATH || ""}`, async (_, res) => {
   return res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 
